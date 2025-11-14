@@ -1,0 +1,25 @@
+{
+  "namespace": "br.com.neves.avro",
+  "type": "record",
+  "name": "Boleto",
+  "fields": [
+    {
+      "name": "codigoBarras",
+      "type": "string"
+    },
+    {
+      "name": "situacaoBoleto",
+      "type": {
+        "type": "enum",
+        "name": "SituacaoBoleto",
+        "symbols": [
+          "INICIALIZADO",
+          "VALIDO",
+          "ERRO_VALIDACAO",
+          "PAGO",
+          "ERRO_PAGAMENTO"
+        ]
+      }
+    }
+  ]
+}

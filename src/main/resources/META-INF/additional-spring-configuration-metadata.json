@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "spring.kafka.template.solicitacao-boleto",
+  "type": "java.lang.String",
+  "description": "A description for 'spring.kafka.template.solicitacao-boleto'"
+}]}

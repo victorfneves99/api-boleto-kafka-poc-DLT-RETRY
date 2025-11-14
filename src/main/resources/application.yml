@@ -1,0 +1,114 @@
+# spring:
+#   application:
+#     name: api-boleto
+#   h2:
+#     console:
+#       enabled: true
+#   datasource:
+#     url: jdbc:h2:mem:api-boleto
+#     username: sa
+#     driver-class-name: org.h2.Driver
+#   jpa:
+#     database-platform: org.hibernate.dialect.H2Dialect
+#     hibernate:
+#       ddl-auto: update
+#   doc:
+#     api-docs:
+#       path: /api-docs
+#     swagger-ui:
+#       path: /swagger-ui.html
+#   kafka:
+#     bootstrap-servers: localhost:19092
+#     admin:
+#       auto-create: false
+#     producer:
+#       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+#       retries: 5
+#       acks: all
+#       properties:
+#         schema.registry.url: http://localhost:8081
+#         max.in.flight.requests.per.connection: 1
+#         enable.idempotence: true
+#         linger.ms: 10
+#         request.timeout.ms: 3000 # timeout por requisição
+#         delivery.timeout.ms: 5000 # tempo máximo total de entrega
+
+# kafka:
+#   topic:
+#     main: solicitacao-boleto-teste
+#     dlt: solicitacao-boleto.DLT
+
+
+# ---------------------------------------------------------------------
+
+spring:
+  application:
+    name: api-boleto  # Nome da aplicação — usado no contexto do Spring e em métricas, logs, etc.
+
+  h2:
+    console:
+      enabled: true  # (Somente em dev) habilita o console do H2 no navegador
+
+  datasource:
+    url: jdbc:h2:mem:api-boleto  # Banco em memória (somente para desenvolvimento)
+    username: sa
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect  # Dialeto SQL para o H2
+    hibernate:
+      ddl-auto: update  # Cria/atualiza automaticamente as tabelas (nunca use em produção)
+
+  doc:
+    api-docs:
+      path: /api-docs       # Caminho do endpoint OpenAPI gerado
+    swagger-ui:
+      path: /swagger-ui.html # Caminho para acessar a interface Swagger UI
+
+  kafka:
+    bootstrap-servers: localhost:19092  # Endereço do broker Kafka
+    admin:
+      auto-create: false  # Impede que o Kafka crie tópicos automaticamente
+
+    producer:
+      # Serializadores usados para chave e valor
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+      # Número máximo de tentativas de envio antes de falhar
+      retries: 5
+
+      # Tipo de confirmação que o producer espera do cluster Kafka
+      # 'all' = aguarda confirmação de todos os brokers (maior segurança)
+      acks: all
+
+      properties:
+        # URL do Schema Registry (usado quando você envia dados Avro)
+        schema.registry.url: http://localhost:8081
+
+        # Número máximo de requisições não confirmadas que podem estar em voo por conexão
+        # Com enable.idempotence=true, isso deve ser <= 5 (ideal é 1 para garantir ordenação)
+        max.in.flight.requests.per.connection: 1
+
+        # Habilita a idempotência (garante que mensagens não sejam duplicadas)
+        enable.idempotence: true
+
+        # Tempo que o producer espera acumular mensagens antes de enviar (em ms)
+        linger.ms: 10
+
+        # Timeout por requisição individual ao broker (em ms)
+        request.timeout.ms: 3000
+
+        # Tempo total máximo de tentativa de entrega (inclui retries)
+        delivery.timeout.ms: 5000
+
+        # Você pode adicionar também:
+        # batch.size: 32768            # (opcional) tamanho máximo de lote de envio (32 KB)
+        # buffer.memory: 67108864      # (opcional) buffer total do producer (64 MB)
+        # compression.type: lz4        # (opcional) compressão para reduzir tráfego de rede
+
+kafka:
+  topic:
+    main: solicitacao-boleto-teste  # Nome do tópico principal para envio
+    dlt: solicitacao-boleto.DLT     # Nome do tópico de Dead Letter (mensagens falhas)
